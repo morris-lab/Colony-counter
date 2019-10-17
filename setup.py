@@ -12,7 +12,7 @@ with open('LICENSE') as f:
 
 setup(
     name='colonycounter',
-    version='0.1.0',
+    version='0.2.0',
     description='Image quantification tool for colony formation assay',
     long_description=readme,
     install_requires=['numpy',
