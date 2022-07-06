@@ -3,7 +3,7 @@
 
 
 from skimage import io, measure, filters, segmentation, morphology, color, exposure
-from skimage.draw import circle
+from skimage.draw import disk
 
 from skimage.transform import hough_circle, hough_circle_peaks
 from skimage.feature import canny
@@ -29,7 +29,7 @@ def detect_circle_by_canny(image_bw, radius=395, n_peaks=20):
     label = np.zeros_like(image_bw)
     ind = 1
     for center_y, center_x, radius in zip(cy, cx, radii):
-        circy, circx = circle(center_y, center_x, radius,
+        circy, circx = disk((center_y, center_x), radius,
                                         shape=image_bw.shape)
         label[circy, circx] = ind
         ind += 1
@@ -60,7 +60,7 @@ def make_circle_label(bb_list, img_shape):
         r, c = _bbox_to_center(bb)
 
         # draw circle
-        rr, cc = circle(r, c, radius)
+        rr, cc = disk((r, c), radius)
         label[rr, cc] = id
         id += 1
 
