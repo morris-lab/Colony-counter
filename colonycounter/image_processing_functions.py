@@ -20,11 +20,11 @@ from scipy import ndimage
 def invert_image(image):
     return (image - 1 )*(-1)
 
-def detect_circle_by_canny(image_bw, radius=395):
-    edges = canny(image_bw, sigma=3)
+def detect_circle_by_canny(image_bw, radius=395, n_peaks=20):
+    edges = canny(image_bw, sigma=2)
     hough_res = hough_circle(edges, [radius])
     accums, cx, cy, radii = hough_circle_peaks(hough_res, [radius],
-                                               total_num_peaks=20)
+                                               total_num_peaks=n_peaks)
 
     label = np.zeros_like(image_bw)
     ind = 1

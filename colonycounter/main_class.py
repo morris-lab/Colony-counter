@@ -97,7 +97,7 @@ class Counter():
             plt.show()
 
 
-    def detect_area_by_canny(self, n_samples=None, radius=395, verbose=True):
+    def detect_area_by_canny(self, n_samples=None, radius=395, n_peaks=20, verbose=True):
         """
         The method detects sample area in input image.
         Large, white and circle-like object in the input image will be
@@ -115,7 +115,7 @@ class Counter():
         bw = self.image_bw.copy()
 
         # detect circles by canny method
-        labeled = detect_circle_by_canny(bw, radius=radius)
+        labeled = detect_circle_by_canny(bw, radius=radius, n_peaks=n_peaks)
 
         self.labeled = labeled
 
@@ -170,14 +170,18 @@ class Counter():
         self.props["names"] = [f"sample_{i}" for i in range(len(self.props["areas"]))]
 
         if verbose:
-            if n_samples is None:
-                print(str(len(self.props['areas'])) +" samples were detected")
-            ax = plt.axes()
-            plt.title("detected samples")
-            ax.imshow(self.image_raw)
-            plot_bboxs(bbox_list=self.props["bboxs"], ax=ax)
-            plot_texts(text_list=self.props["names"], cordinate_list=self.props["bboxs"], ax=ax, shift=[0, -60])
-            plt.show()
+            self.plot_detected_area()
+
+
+    def plot_detected_area(self):
+
+        print(str(len(self.props['areas'])) +" samples were detected")
+        ax = plt.axes()
+        plt.title("detected samples")
+        ax.imshow(self.image_raw)
+        plot_bboxs(bbox_list=self.props["bboxs"], ax=ax)
+        plot_texts(text_list=self.props["names"], cordinate_list=self.props["bboxs"], ax=ax, shift=[0, -60])
+        plt.show()
 
     def detect_area(self, n_samples, white_threshold=0.7, use_binelized_image_for_edge_detection=True, verbose=True):
         """
@@ -451,7 +455,7 @@ class Counter():
         if verbose:
             self.plot_detected_colonies()
 
-    def plot_detected_colonies(self, plot="final", col_num=3, save=None):
+    def plot_detected_colonies(self, plot="final", col_num=3, vmax=None, save=None, overlay_circle=True):
         """
         Function to plot detected colonies detection.
 
@@ -470,8 +474,9 @@ class Counter():
         else:
             raise ValueError("plot argment is wrong.")
 
-
-        vmax = _get_vmax(image_list)
+        if vmax is None:
+            vmax = _get_vmax(image_list)
+            print("vmax: ", vmax)
         idx = 1
 
         for i, image in enumerate(image_list):
@@ -481,16 +486,19 @@ class Counter():
             blobs = self.detected_blobs[i]
             if plot == "raw":
                 plt.imshow(image, cmap="gray", vmin=0, vmax=vmax)
-                plot_circles(circle_list=blobs, ax=ax, args={"color": "black"})
+                if overlay_circle:
+                    plot_circles(circle_list=blobs, ax=ax, args={"color": "black"})
 
             else:
                 plt.imshow(image, vmin=0, vmax=vmax)
-                plot_circles(circle_list=blobs, ax=ax)
+                if overlay_circle:
+                    plot_circles(circle_list=blobs, ax=ax)
 
             name = self.props["names"][i]
             plt.title(f"{name}: {len(blobs)} colonies")
             if (k == col_num) | (i == len(image_list)):
-                plt.savefig(f"{save}_{idx}.png", transparent=True)
+                if save is not None:
+                    plt.savefig(f"{save}_{idx}.png", transparent=True)
                 plt.show()
                 idx += 1
 
