@@ -11,7 +11,7 @@ with open('LICENSE') as f:
 
 
 setup(
-    name='colonycounter',
+    name='colonycounter2',
     version='0.3.0',
     description='Image quantification tool for colony formation assay',
     long_description=readme,
