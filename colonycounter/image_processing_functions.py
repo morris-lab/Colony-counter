@@ -34,7 +34,7 @@ def detect_circle_by_canny(image_bw, radius=395, n_peaks=20):
         label[circy, circx] = ind
         ind += 1
 
-    return label.astype(np.int)
+    return label.astype(int)
 
 def _get_radius(bbox):
     minr, minc, maxr, maxc = bbox
@@ -64,7 +64,7 @@ def make_circle_label(bb_list, img_shape):
         label[rr, cc] = id
         id += 1
 
-    return label.astype(np.int)
+    return label.astype(int)
 
 def crop_circle(image, shrinkage_ratio=0.95):
 
